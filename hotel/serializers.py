@@ -21,3 +21,12 @@ class AdministradorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Administrador
         fields = '__all__'
+
+
+class RecepcionistaSerializer(serializers.ModelSerializer):
+    
+    user=UserSerializer(read_only=True)
+    
+    class Meta:
+        model = Recepcionista
+        fields = '__all__'
