@@ -7,6 +7,7 @@ from hotel.serializers import AdministradorSerializer
 from hotel.serializers import RecepcionistaSerializer
 
 from rest_framework import status
+from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -16,7 +17,8 @@ from hotel.models import Recepcionista
 # Administradores
 
 class AdministradoresView(APIView):
-    
+
+    permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
         
         administradores = Administrador.objects.all()
@@ -26,6 +28,7 @@ class AdministradoresView(APIView):
         
 class AdministradorView(APIView):
    
+    permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
         
         admin = get_object_or_404(Administrador, id = request.GET.get("id"))
@@ -81,6 +84,7 @@ class AdministradorView(APIView):
 
 class RecepcionistasView(APIView):
     
+    permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
         
         recepcionistas = Recepcionista.objects.all()
@@ -89,7 +93,8 @@ class RecepcionistasView(APIView):
         return Response(serializer.data)
     
 class RecepcionistaView(APIView):
-        
+    
+    permission_classes = (permissions.IsAuthenticated,)
     def get(self, request, *args, **kwargs):
         
         recepcionista = get_object_or_404(Recepcionista, id = request.GET.get("id"))
