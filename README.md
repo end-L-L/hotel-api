@@ -1,4 +1,4 @@
-Hotel Backend API
+Hotel API
 ====================
 
 ## Requerimientos

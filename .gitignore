@@ -57,3 +57,6 @@ hotel/migrations/*
 
 # Django Media
 media/*
+
+# Django SQLite Database
+db.sqlite3
