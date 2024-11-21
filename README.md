@@ -32,5 +32,12 @@ Hotel Backend API
 `$ python manage.py makemigrations hotel`\
 `$ python manage.py migrate`
 
-6. Correr el Servidor\
- `$ python manage.py runserver`
+6. Crear Superusuario
+`$ python manage.py createsuperuser`
+
+7. Correr el Servidor\
+`$ python manage.py runserver`
+
+## Django Administration
+
+- URL: `http://127.0.0.1:8000/admin`
