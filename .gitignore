@@ -51,3 +51,9 @@ manage.py
 
 # example database
 drf_example
+
+# Django Migrations
+hotel/migrations/*
+
+# Django Media
+media/*
