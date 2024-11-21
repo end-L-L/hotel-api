@@ -21,22 +21,22 @@ Hotel Backend API
 
 ## Development Server
 
-1. Instalar las Librerías Requeridas\
-`$ pip install -r requirements.txt`
+1. Instalar las Librerías Requeridas
+- `$ pip install -r requirements.txt`
 
 2. Crear la Base de Datos en MySQL con el Nombre Establecido en `my.cnf`
 3. Si MySQL Está Configurado con Usuario y Contraseña Personalizados, Establecer los Párametros en `my.cnf` 
 
-4. Aplicar las Migraciones de Django\
-`$ python manage.py migrate`
-`$ python manage.py makemigrations hotel`\
-`$ python manage.py migrate`
+4. Aplicar las Migraciones de Django
+- `$ python manage.py migrate`
+- `$ python manage.py makemigrations hotel`
+- `$ python manage.py migrate`
 
 6. Crear Superusuario
-`$ python manage.py createsuperuser`
+- `$ python manage.py createsuperuser`
 
-7. Correr el Servidor\
-`$ python manage.py runserver`
+7. Correr el Servidor
+- `$ python manage.py runserver`
 
 ## Django Administration
 
