@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from hotel.serializers import UserSerializer
 from hotel.serializers import AdministradorSerializer
 from hotel.serializers import RecepcionistaSerializer
+from hotel.serializers import ClienteSerializer
 
 from rest_framework import status
 from rest_framework import permissions
@@ -13,6 +14,7 @@ from rest_framework.response import Response
 
 from hotel.models import Administrador
 from hotel.models import Recepcionista
+from hotel.models import Cliente
 
 # Administradores
 
@@ -36,6 +38,7 @@ class AdministradorView(APIView):
 
         return Response(admin, 200)
     
+    permission_classes = ()
     def post(self, request, *args, **kwargs):
         
         user = UserSerializer(data=request.data)
@@ -102,6 +105,7 @@ class RecepcionistaView(APIView):
 
         return Response(recepcionista, 200)
     
+    permission_classes = ()
     def post(self, request, *args, **kwargs):
         
         user = UserSerializer(data=request.data)
