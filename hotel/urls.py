@@ -38,6 +38,10 @@ urlpatterns = [
 	
     # tipo habitaciones
     path("v1/hotel/tipo-habitacion", hotel.TipoHabitacionView.as_view(), name="tipo-habitacion"),
+	
+    # reservaciones
+    path("v1/hotel/reservacion", hotel.ReservacionView.as_view(), name="reservacion"),
+    path("v1/hotel/lista-reservaciones", hotel.ReservacionesView.as_view(), name="lista-reservaciones"),
 ]
 
 if settings.DEBUG:

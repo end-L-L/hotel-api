@@ -123,3 +123,26 @@ class Habitacion(models.Model):
         verbose_name = 'Habitación'
         verbose_name_plural = 'Habitaciones'
         ordering = ['-creation']
+
+# Reservaciones
+class Reservacion(models.Model):
+    
+    id = models.BigAutoField(primary_key=True)
+    
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    habitacion = models.ForeignKey(Habitacion, on_delete=models.CASCADE)
+    fecha_entrada = models.DateField()
+    fecha_salida = models.DateField()
+    total = models.FloatField()
+    pagado = models.BooleanField(default=False)
+
+    creation = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Reservación: {self.id}"
+    
+    class Meta:
+        verbose_name = 'Reservación'
+        verbose_name_plural = 'Reservaciones'
+        ordering = ['-creation']

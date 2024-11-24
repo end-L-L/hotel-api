@@ -72,3 +72,18 @@ class HabitacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Habitacion
         fields = ('id','numero','tipo','precio','disponible', 'imagen')
+
+class ReservacionSerializer(serializers.ModelSerializer):
+        
+    id = serializers.IntegerField(read_only=True)
+
+    cliente = serializers.PrimaryKeyRelatedField(queryset=Cliente.objects.all())
+    habitacion = serializers.PrimaryKeyRelatedField(queryset=Habitacion.objects.all())
+    fecha_entrada = serializers.DateField(required=True)
+    fecha_salida = serializers.DateField(required=True)
+    total = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    pagado = serializers.BooleanField(required=False)
+    
+    class Meta:
+        model = Reservacion
+        fields = ('id','cliente','habitacion','fecha_entrada','fecha_salida', 'total', 'pagado')

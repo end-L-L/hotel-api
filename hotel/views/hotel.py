@@ -10,10 +10,12 @@ from rest_framework.response import Response
 from hotel.models import Cliente
 from hotel.models import Habitacion
 from hotel.models import Tipo_Habitacion
+from hotel.models import Reservacion
 
 from hotel.serializers import ClienteSerializer
 from hotel.serializers import HabitacionSerializer
 from hotel.serializers import Tipo_HabitacionSerializer
+from hotel.serializers import ReservacionSerializer
 
 from rest_framework import permissions
 
@@ -21,13 +23,13 @@ from rest_framework import permissions
 
 class ClientesView(APIView):
         
-        #permission_classes = (permissions.IsAuthenticated,)
-        def get(self, request, *args, **kwargs):
-            
-            clientes = Cliente.objects.all()
-            serializer = ClienteSerializer(clientes, many=True)
-            
-            return Response(serializer.data)
+    #permission_classes = (permissions.IsAuthenticated,)
+    def get(self, request, *args, **kwargs):
+        
+        clientes = Cliente.objects.all()
+        serializer = ClienteSerializer(clientes, many=True)
+        
+        return Response(serializer.data)
         
 class ClienteView(APIView):
     
@@ -39,14 +41,14 @@ class ClienteView(APIView):
         return Response(cliente, 200)
     
     def post(self, request, *args, **kwargs):
-            
-            cliente = ClienteSerializer(data=request.data)
-            
-            if cliente.is_valid():
-                cliente.save()
-                return Response(cliente.data, 201)
-            
-            return Response(cliente.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        cliente = ClienteSerializer(data=request.data)
+        
+        if cliente.is_valid():
+            cliente.save()
+            return Response(cliente.data, 201)
+        
+        return Response(cliente.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TipoHabitacionView(APIView):
     
@@ -96,3 +98,46 @@ class HabitacionView(APIView):
             return Response(habitacion.data, 201)
         
         return Response(habitacion.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ReservacionesView(APIView):
+        
+    def get(self, request, *args, **kwargs):
+        
+        reservaciones = Reservacion.objects.all()
+        serializer = ReservacionSerializer(reservaciones, many=True)
+        
+        return Response(serializer.data)
+
+class ReservacionView(APIView):
+
+    def post(self, request):
+        # Obtener el `personal_id` del request
+        personal_id = request.data.get("cliente")
+        cliente = get_object_or_404(Cliente, personal_id=personal_id)
+
+        # Crear datos para el serializador
+        habitacion = get_object_or_404(Habitacion, id=request.data.get("habitacion"))
+        
+        fecha_entrada = datetime.datetime.strptime(request.data.get("fecha_entrada"), "%Y-%m-%d")
+        fecha_salida = datetime.datetime.strptime(request.data.get("fecha_salida"), "%Y-%m-%d")
+        
+        # Calcular el total
+        total = habitacion.precio * (fecha_salida - fecha_entrada).days
+
+        # Crear los datos para el serializador
+        data = {
+            "cliente": cliente.id,
+            "habitacion": habitacion.id,
+            "fecha_entrada": fecha_entrada.date(),
+            "fecha_salida": fecha_salida.date(),
+            "total": total
+        }
+
+        # Pasar los datos al serializador
+        reservacion = ReservacionSerializer(data=data)
+
+        if reservacion.is_valid():
+            reservacion.save()
+            return Response(reservacion.data, status=201)
+        
+        return Response(reservacion.errors, status=400)
