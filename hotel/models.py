@@ -54,7 +54,7 @@ class Recepcionista(models.Model):
     class Meta:
         verbose_name = 'Recepcionista'
         verbose_name_plural = 'Recepcionistas'
-        ordering = ['-creation']
+        #ordering = ['-creation']
 
 # Cliente
 class Cliente(models.Model):
@@ -81,7 +81,7 @@ class Cliente(models.Model):
     class Meta:
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
-        ordering = ['-creation']
+        #ordering = ['-creation']
     
 # Tipos de Habitación
 class Tipo_Habitacion(models.Model):
@@ -99,7 +99,7 @@ class Tipo_Habitacion(models.Model):
     class Meta:
         verbose_name = 'Tipo de Habitación'
         verbose_name_plural = 'Tipos de Habitaciones'
-        ordering = ['-creation']
+        #ordering = ['-creation']
 
 # Habitaciones
 class Habitacion(models.Model):
@@ -122,7 +122,7 @@ class Habitacion(models.Model):
     class Meta:
         verbose_name = 'Habitación'
         verbose_name_plural = 'Habitaciones'
-        ordering = ['-creation']
+        #ordering = ['+creation']
 
 # Reservaciones
 class Reservacion(models.Model):
@@ -145,4 +145,4 @@ class Reservacion(models.Model):
     class Meta:
         verbose_name = 'Reservación'
         verbose_name_plural = 'Reservaciones'
-        ordering = ['-creation']
+        #ordering = ['-creation']

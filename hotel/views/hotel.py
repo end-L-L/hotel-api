@@ -50,6 +50,8 @@ class ClienteView(APIView):
         
         return Response(cliente.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# Habitaciones
+
 class TipoHabitacionView(APIView):
     
     permission_classes = ()
@@ -73,12 +75,12 @@ class TipoHabitacionView(APIView):
 class HabitacionesView(APIView):
         
         permission_classes = ()
-        def get(self, request, *args, **kwargs):
+        def get(self, request):
             
             habitaciones = Habitacion.objects.all()
             serializer = HabitacionSerializer(habitaciones, many=True)
             
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 class HabitacionView(APIView):
     
@@ -98,7 +100,9 @@ class HabitacionView(APIView):
             return Response(habitacion.data, 201)
         
         return Response(habitacion.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+# Reservaciones
+
 class ReservacionesView(APIView):
         
     def get(self, request, *args, **kwargs):
@@ -111,12 +115,16 @@ class ReservacionesView(APIView):
 class ReservacionView(APIView):
 
     def post(self, request):
+        
         # Obtener el `personal_id` del request
         personal_id = request.data.get("cliente")
         cliente = get_object_or_404(Cliente, personal_id=personal_id)
 
         # Crear datos para el serializador
-        habitacion = get_object_or_404(Habitacion, id=request.data.get("habitacion"))
+        habitacion_id = request.data.get("habitacion")
+        habitacion = get_object_or_404(Habitacion, numero=habitacion_id)
+        
+        #habitacion = get_object_or_404(Habitacion, id=request.data.get("habitacion"))
         
         fecha_entrada = datetime.datetime.strptime(request.data.get("fecha_entrada"), "%Y-%m-%d")
         fecha_salida = datetime.datetime.strptime(request.data.get("fecha_salida"), "%Y-%m-%d")
@@ -137,7 +145,36 @@ class ReservacionView(APIView):
         reservacion = ReservacionSerializer(data=data)
 
         if reservacion.is_valid():
+
+            if not habitacion.disponible:
+                return Response({"error": "Habitación no Disponible"}, status=status.HTTP_404_NOT_FOUND)
+                
+            habitacion.disponible = False
+            habitacion.save()
+
             reservacion.save()
+
             return Response(reservacion.data, status=201)
         
         return Response(reservacion.errors, status=400)
+    
+class ReservacionViewEdit(APIView):
+    
+    def delete(self, request, *args, **kwargs):
+        
+        habitacion_id = request.data.get("id")
+        habitacion = get_object_or_404(Habitacion, numero=habitacion_id)
+
+        if habitacion.disponible:
+            return Response({"error": "Habitación no Reservada"}, status=status.HTTP_404_NOT_FOUND)
+        
+        reservacion = get_object_or_404(Reservacion, habitacion=habitacion.id)
+        
+        if not reservacion:
+            return Response({"error": "Reservación no Encontrada"}, status=status.HTTP_404_NOT_FOUND)
+        
+        reservacion.delete()
+        habitacion.disponible = True
+        habitacion.save()
+        
+        return Response({"message": "Reservación Eliminada"}, status=200)

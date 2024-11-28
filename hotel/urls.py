@@ -1,5 +1,5 @@
-from django.urls import path, include
-from rest_framework import routers
+from django.urls import path
+#from rest_framework import routers
 
 from hotel.views import auth
 from hotel.views import usuarios
@@ -8,7 +8,7 @@ from hotel.views import hotel
 from django.conf import settings
 from django.conf.urls.static import static
 
-routers = routers.DefaultRouter()
+#routers = routers.DefaultRouter()
 
 urlpatterns = [
 
@@ -42,6 +42,8 @@ urlpatterns = [
     # reservaciones
     path("v1/hotel/reservacion", hotel.ReservacionView.as_view(), name="reservacion"),
     path("v1/hotel/lista-reservaciones", hotel.ReservacionesView.as_view(), name="lista-reservaciones"),
+	#path("v1/hotel/ver-reservacion", hotel.VerReservacionView.as_view(), name="ver-reservacion"),
+	path("v1/hotel/eliminar-reservacion", hotel.ReservacionViewEdit.as_view(), name="eliminar-reservacion"),    
 ]
 
 if settings.DEBUG:
