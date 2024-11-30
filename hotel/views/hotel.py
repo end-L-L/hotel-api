@@ -2,7 +2,7 @@ from django.contrib.auth.models  import User
 from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 
-import datetime
+from datetime import datetime
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -103,6 +103,56 @@ class HabitacionView(APIView):
 
 # Reservaciones
 
+class CostoReservacionView(APIView):
+        
+    def post(self, request, *args, **kwargs):
+        
+        id_cliente = request.data.get("cliente")
+        id_habitacion = request.data.get("habitacion")
+        fecha_e = request.data.get("fecha_entrada")
+        fecha_s = request.data.get("fecha_salida")
+        
+        if(id_cliente == 0):
+            cliente = Cliente()
+        else:
+            cliente = get_object_or_404(Cliente, personal_id = id_cliente)
+        
+        habitacion = get_object_or_404(Habitacion, numero = id_habitacion)
+        if not habitacion:
+            return Response({"error": "Habitación no Encontrada"}, status=status.HTTP_404_NOT_FOUND)
+        
+        fecha_entrada = datetime.strptime(fecha_e, "%Y-%m-%d")
+        fecha_salida = datetime.strptime(fecha_s, "%Y-%m-%d")
+
+        disponible = habitacion.disponible
+        dias = (fecha_salida - fecha_entrada).days
+
+        if(dias == 0):
+            dias = 1
+
+        total = habitacion.precio * dias
+        
+        if cliente.descuento > 0:
+            descuento = abs(cliente.descuento)
+
+            if descuento > 1:
+                descuento = descuento / 100
+
+            total_descuento = total - (total * descuento) 
+        else:
+            total = habitacion.precio * dias
+            total_descuento = total
+
+        return Response({
+            "mensaje": "Costo de la Reservación",
+            "disponible": disponible,
+            "dias": dias,
+            "precio": habitacion.precio,
+            "descuento": cliente.descuento,
+            "total_sd": total,
+            "total_cd": total_descuento
+        })
+
 class ReservacionesView(APIView):
         
     def get(self, request, *args, **kwargs):
@@ -119,18 +169,20 @@ class ReservacionView(APIView):
         # Obtener el `personal_id` del request
         personal_id = request.data.get("cliente")
         cliente = get_object_or_404(Cliente, personal_id=personal_id)
+        pagado = request.data.get("pagado")
 
         # Crear datos para el serializador
         habitacion_id = request.data.get("habitacion")
         habitacion = get_object_or_404(Habitacion, numero=habitacion_id)
         
-        #habitacion = get_object_or_404(Habitacion, id=request.data.get("habitacion"))
-        
-        fecha_entrada = datetime.datetime.strptime(request.data.get("fecha_entrada"), "%Y-%m-%d")
-        fecha_salida = datetime.datetime.strptime(request.data.get("fecha_salida"), "%Y-%m-%d")
+        fecha_entrada = datetime.strptime(request.data.get("fecha_entrada"), "%Y-%m-%d")
+        fecha_salida = datetime.strptime(request.data.get("fecha_salida"), "%Y-%m-%d")
         
         # Calcular el total
-        total = habitacion.precio * (fecha_salida - fecha_entrada).days
+        dias = (fecha_salida - fecha_entrada).days
+        if dias == 0:
+            dias = 1
+        total = habitacion.precio * dias
 
         # Crear los datos para el serializador
         data = {
@@ -138,17 +190,21 @@ class ReservacionView(APIView):
             "habitacion": habitacion.id,
             "fecha_entrada": fecha_entrada.date(),
             "fecha_salida": fecha_salida.date(),
-            "total": total
+            "total": total,
+            "pagado": pagado
         }
 
         # Pasar los datos al serializador
         reservacion = ReservacionSerializer(data=data)
 
         if reservacion.is_valid():
-
+        
             if not habitacion.disponible:
                 return Response({"error": "Habitación no Disponible"}, status=status.HTTP_404_NOT_FOUND)
-                
+            
+            cliente.visitas += 1
+            cliente.save()
+
             habitacion.disponible = False
             habitacion.save()
 
@@ -160,10 +216,10 @@ class ReservacionView(APIView):
     
 class ReservacionViewEdit(APIView):
     
-    def delete(self, request, *args, **kwargs):
-        
-        habitacion_id = request.data.get("id")
-        habitacion = get_object_or_404(Habitacion, numero=habitacion_id)
+    def delete(self, request, id, *args, **kwargs):
+    
+        id_habitacion = id
+        habitacion = get_object_or_404(Habitacion, numero=id_habitacion)
 
         if habitacion.disponible:
             return Response({"error": "Habitación no Reservada"}, status=status.HTTP_404_NOT_FOUND)

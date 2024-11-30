@@ -46,10 +46,11 @@ class ClienteSerializer(serializers.ModelSerializer):
     telefono = serializers.CharField(required=True)
     tipo_cliente = serializers.CharField(required=False)
     descuento = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    visitas = serializers.IntegerField(required=False)
 
     class Meta:
         model = Cliente
-        fields = ('id','personal_id','nombre','email','telefono', 'tipo_cliente', 'descuento')
+        fields = ('id','personal_id','nombre','email','telefono', 'tipo_cliente', 'descuento', 'visitas')
 
 class Tipo_HabitacionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)

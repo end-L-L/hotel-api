@@ -71,6 +71,7 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=15, blank=True, null=True)
     tipo_cliente = models.CharField(max_length=1, choices=TIPO_CLIENTE, default='E')
     descuento = models.FloatField(default=0.0)
+    visitas = models.IntegerField(default=0)
 
     creation = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
