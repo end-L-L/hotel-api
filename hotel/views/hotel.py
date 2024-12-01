@@ -234,3 +234,22 @@ class ReservacionViewEdit(APIView):
         habitacion.save()
         
         return Response({"message": "Reservación Eliminada"}, status=200)
+    
+class ListaReservacionesView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        reservaciones = Reservacion.objects.select_related('cliente', 'habitacion').all()
+        data = []
+        for reservacion in reservaciones:
+            data.append({
+                "id": reservacion.id,
+                "cliente": reservacion.cliente.personal_id,
+                "nombre": reservacion.cliente.nombre,
+                "habitacion": reservacion.habitacion.numero,
+                "fecha_entrada": reservacion.fecha_entrada,
+                "fecha_salida": reservacion.fecha_salida,
+                "total": reservacion.total,
+                "pagado": reservacion.pagado
+            })
+        return Response(data, status=200)
+    
