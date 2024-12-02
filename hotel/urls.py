@@ -1,14 +1,15 @@
-from django.urls import path, include
-from rest_framework import routers
+from django.urls import path
+#from rest_framework import routers
 
 from hotel.views import auth
 from hotel.views import usuarios
 from hotel.views import hotel
+from hotel.views import utils
 
 from django.conf import settings
 from django.conf.urls.static import static
 
-routers = routers.DefaultRouter()
+#routers = routers.DefaultRouter()
 
 urlpatterns = [
 
@@ -38,6 +39,25 @@ urlpatterns = [
 	
     # tipo habitaciones
     path("v1/hotel/tipo-habitacion", hotel.TipoHabitacionView.as_view(), name="tipo-habitacion"),
+	
+    # reservaciones
+    path("v1/hotel/reservacion", hotel.ReservacionView.as_view(), name="reservacion"),
+    path("v1/hotel/lista-reservaciones", hotel.ReservacionesView.as_view(), name="lista-reservaciones"),
+	path("v1/hotel/costo-reservacion", hotel.CostoReservacionView.as_view(), name="costo-reservacion"),
+	#path("v1/hotel/ver-reservacion", hotel.VerReservacionView.as_view(), name="ver-reservacion"),
+	path("v1/hotel/eliminar-reservacion/<int:id>", hotel.ReservacionViewEdit.as_view(), name="eliminar-reservacion"),
+	path("v1/hotel/resumen-reservaciones", hotel.ListaReservacionesView.as_view(), name="resumen-reservaciones"),
+	
+    # Settings
+	
+    # ajustes
+    path("v1/hotel/app-precio-habitacion", utils.PrecioHabitacionView.as_view(), name="app-precio-habitacion"),
+	
+    # descuentos
+    path("v1/hotel/app-descuento-usual", utils.DescuentoUsualView.as_view(), name="app-descuento-usual"),
+	
+    # ganancias
+	path("v1/hotel/app-ganancias-mes", utils.GananciasView.as_view(), name="app-ganancias-mes")
 ]
 
 if settings.DEBUG:

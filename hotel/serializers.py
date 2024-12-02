@@ -44,10 +44,13 @@ class ClienteSerializer(serializers.ModelSerializer):
     nombre = serializers.CharField(required=True)
     email = serializers.CharField(required=True)
     telefono = serializers.CharField(required=True)
+    tipo_cliente = serializers.CharField(required=False)
+    descuento = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    visitas = serializers.IntegerField(required=False)
 
     class Meta:
         model = Cliente
-        fields = ('id','personal_id','nombre','email','telefono')
+        fields = ('id','personal_id','nombre','email','telefono', 'tipo_cliente', 'descuento', 'visitas')
 
 class Tipo_HabitacionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -66,9 +69,44 @@ class HabitacionSerializer(serializers.ModelSerializer):
     numero = serializers.IntegerField(required=True)
     tipo = serializers.PrimaryKeyRelatedField(queryset=Tipo_Habitacion.objects.all())
     precio = serializers.DecimalField(max_digits=10, decimal_places=2, required=True)
-    disponible = serializers.CharField(required=True)
+    disponible = serializers.BooleanField(required=True)
     imagen = serializers.ImageField(required=False)
     
     class Meta:
         model = Habitacion
         fields = ('id','numero','tipo','precio','disponible', 'imagen')
+
+class ReservacionSerializer(serializers.ModelSerializer):
+        
+    id = serializers.IntegerField(read_only=True)
+
+    cliente = serializers.PrimaryKeyRelatedField(queryset=Cliente.objects.all())
+    habitacion = serializers.PrimaryKeyRelatedField(queryset=Habitacion.objects.all())
+    fecha_entrada = serializers.DateField(required=True)
+    fecha_salida = serializers.DateField(required=True)
+    total = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    pagado = serializers.BooleanField(required=False)
+    
+    class Meta:
+        model = Reservacion
+        fields = ('id','cliente','habitacion','fecha_entrada','fecha_salida', 'total', 'pagado')
+
+# App Settings Serializers
+
+# Precio Habitacion por Tipo
+class PrecioTipoHabitacionSerializer(serializers.Serializer):
+    tipo_id = serializers.IntegerField()
+    tipo = serializers.CharField()
+    precio = serializers.FloatField(allow_null=True)
+
+class UpdatePrecioSerializer(serializers.Serializer):
+    tipo_id = serializers.IntegerField()
+    precio = serializers.FloatField()
+
+# Descuento Habitual
+class DescuentoHabitualSerializer(serializers.Serializer):
+    tipo_cliente = serializers.CharField()
+    descuento = serializers.FloatField()
+
+class UpdateDescuentoHabitualSerializer(serializers.Serializer):
+    descuento = serializers.FloatField()

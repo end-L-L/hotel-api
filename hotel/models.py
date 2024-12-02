@@ -54,7 +54,7 @@ class Recepcionista(models.Model):
     class Meta:
         verbose_name = 'Recepcionista'
         verbose_name_plural = 'Recepcionistas'
-        ordering = ['-creation']
+        #ordering = ['-creation']
 
 # Cliente
 class Cliente(models.Model):
@@ -71,6 +71,7 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=15, blank=True, null=True)
     tipo_cliente = models.CharField(max_length=1, choices=TIPO_CLIENTE, default='E')
     descuento = models.FloatField(default=0.0)
+    visitas = models.IntegerField(default=0)
 
     creation = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
@@ -81,7 +82,7 @@ class Cliente(models.Model):
     class Meta:
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
-        ordering = ['-creation']
+        #ordering = ['-creation']
     
 # Tipos de Habitación
 class Tipo_Habitacion(models.Model):
@@ -99,7 +100,7 @@ class Tipo_Habitacion(models.Model):
     class Meta:
         verbose_name = 'Tipo de Habitación'
         verbose_name_plural = 'Tipos de Habitaciones'
-        ordering = ['-creation']
+        #ordering = ['-creation']
 
 # Habitaciones
 class Habitacion(models.Model):
@@ -122,4 +123,27 @@ class Habitacion(models.Model):
     class Meta:
         verbose_name = 'Habitación'
         verbose_name_plural = 'Habitaciones'
-        ordering = ['-creation']
+        #ordering = ['+creation']
+
+# Reservaciones
+class Reservacion(models.Model):
+    
+    id = models.BigAutoField(primary_key=True)
+    
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    habitacion = models.ForeignKey(Habitacion, on_delete=models.CASCADE)
+    fecha_entrada = models.DateField()
+    fecha_salida = models.DateField()
+    total = models.FloatField()
+    pagado = models.BooleanField(default=False)
+
+    creation = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Reservación: {self.id}"
+    
+    class Meta:
+        verbose_name = 'Reservación'
+        verbose_name_plural = 'Reservaciones'
+        #ordering = ['-creation']
