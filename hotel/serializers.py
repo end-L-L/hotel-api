@@ -90,3 +90,23 @@ class ReservacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservacion
         fields = ('id','cliente','habitacion','fecha_entrada','fecha_salida', 'total', 'pagado')
+
+# App Settings Serializers
+
+# Precio Habitacion por Tipo
+class PrecioTipoHabitacionSerializer(serializers.Serializer):
+    tipo_id = serializers.IntegerField()
+    tipo = serializers.CharField()
+    precio = serializers.FloatField(allow_null=True)
+
+class UpdatePrecioSerializer(serializers.Serializer):
+    tipo_id = serializers.IntegerField()
+    precio = serializers.FloatField()
+
+# Descuento Habitual
+class DescuentoHabitualSerializer(serializers.Serializer):
+    tipo_cliente = serializers.CharField()
+    descuento = serializers.FloatField()
+
+class UpdateDescuentoHabitualSerializer(serializers.Serializer):
+    descuento = serializers.FloatField()
